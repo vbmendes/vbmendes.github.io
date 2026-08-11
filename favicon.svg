@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="vbmendes">
+<title>vbmendes</title>
+<!-- Variante de favicon: marca em petróleo com contorno em papel, fundo transparente.
+     O contorno existe porque #00636B sozinho quase some em aba escura. É o mesmo
+     caminho desenhado duas vezes — papel embaixo, mais grosso; petróleo em cima.
+     Peso do contorno: 15 (3 unidades de cada lado). 13 deixa mais discreto; acima
+     de 17 o halo fecha os vazios internos a 16px e a marca vira mancha. -->
+<g fill="none" stroke-linecap="round" stroke-linejoin="round"
+   transform="translate(50 50) scale(1.1282) translate(-50.0 -48.5)">
+  <g stroke="#FAF9F7" stroke-width="15">
+    <path d="M 20 14 L 20 53"/>
+    <path d="M 20 53 A 30 30 0 1 0 50 23"/>
+    <path d="M 34 53 L 46 67 L 65 38"/>
+    <path d="M 53 14 L 40 23 L 53 32"/>
+  </g>
+  <g stroke="#00636B" stroke-width="9">
+    <path d="M 20 14 L 20 53"/>
+    <path d="M 20 53 A 30 30 0 1 0 50 23"/>
+    <path d="M 34 53 L 46 67 L 65 38"/>
+    <path d="M 53 14 L 40 23 L 53 32"/>
+  </g>
+</g>
+</svg>

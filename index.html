@@ -10,8 +10,11 @@
 <meta name="theme-color" content="#101418" media="(prefers-color-scheme: dark)">
 
 <link rel="canonical" href="https://vbmendes.dev/">
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" href="/icone-192.png" type="image/png">
+<!-- Favicon: marca em petróleo com contorno em papel, fundo transparente. O
+     apple-touch-icon fica de fora e mantém fundo — o iOS achata transparência
+     em preto. -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon-180.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="stylesheet" href="/styles.css">
@@ -21,9 +24,15 @@
 <meta property="og:title" content="Vinicius Mendes — vbmendes">
 <meta property="og:description" content="Staff Engineer na Loadsmart. Newsletter, palestras e redes.">
 <meta property="og:image" content="https://vbmendes.dev/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Vinicius Mendes palestrando na Python Brasil 2025.">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 <body>
+
+<!-- Decorativa: entra pela direita e some por baixo dos cartões. -->
+<div class="foto" aria-hidden="true"></div>
 
 <!-- Ícones: um sprite só, referenciado por <use>. -->
 <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
@@ -76,6 +85,11 @@
 
     <h1 class="nome">Vinicius Mendes</h1>
     <p class="handle">@vbmendes</p>
+
+    <img class="retrato" src="/photos/profile-2024.jpg"
+         width="480" height="480" decoding="async"
+         alt="Foto de perfil de Vinicius Mendes.">
+
     <p class="bio">
       Staff Engineer na <strong>Loadsmart</strong>.<br>
       Antes: Dataprev, UFRN e Globo.com.
