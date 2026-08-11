@@ -319,9 +319,9 @@ a { color: inherit; text-decoration: none; }
   transform: translate(2px, -2px);
 }
 
-/* O destaque se distingue pelo selo âmbar e pela linha de apoio, não por
-   uma borda colorida: âmbar é contraponto pontual, não superfície. */
-.destaque .sub-cartao { max-width: 34ch; }
+/* O destaque não ganha borda nem fundo próprio: âmbar é contraponto pontual,
+   não superfície. Quem marca o cartão é o selo. A classe fica como gancho,
+   sem regra — a linha de apoio quebra onde o cartão mandar. */
 
 /* ---------- rodapé ---------- */
 
