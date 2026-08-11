@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>og</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* Fonte do og.png. Não faz parte do site: é renderizado a 1200x630 e
+     apagado depois. Ver "make og" no Makefile da raiz. */
+  html, body { margin: 0; background: #101418; }
+  .card {
+    position: relative;
+    width: 1200px; height: 630px;
+    overflow: hidden;
+    background: #101418;
+    color: #FAF9F7;
+    font-family: "Poppins", sans-serif;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 72px;
+  }
+  .card .foto-og {
+    position: absolute; inset: 0 0 0 auto;
+    width: 62%;
+    background: url("/photos/python-brasil-2025.jpg") 64% center / cover no-repeat;
+    opacity: .5;
+    -webkit-mask-image: linear-gradient(to left, #000 18%, transparent 92%);
+    mask-image: linear-gradient(to left, #000 18%, transparent 92%);
+  }
+  .card .conteudo { position: relative; z-index: 1; max-width: 620px; }
+  .card svg { width: 78px; height: auto; color: #3BBFB2; display: block; }
+  .card h1 {
+    margin: 26px 0 0;
+    font-size: 68px; font-weight: 700; letter-spacing: -.04em; line-height: 1.02;
+  }
+  .card .handle {
+    margin: 14px 0 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 21px; font-weight: 500; letter-spacing: .12em; color: #3BBFB2;
+  }
+  .card .bio {
+    margin: 22px 0 0;
+    font-size: 25px; line-height: 1.4; color: #A7AEB5; max-width: 15em;
+  }
+  .card .pe {
+    position: absolute; left: 72px; bottom: 52px; z-index: 1;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 19px; letter-spacing: .16em; color: #6E767E;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="foto-og"></div>
+  <div class="conteudo">
+    <svg viewBox="0 0 97 106" aria-hidden="true">
+      <g transform="translate(-1.5 4.5)" fill="none" stroke="currentColor" stroke-width="9"
+         stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 20 14 L 20 53"/>
+        <path d="M 20 53 A 30 30 0 1 0 50 23"/>
+        <path d="M 34 53 L 46 67 L 65 38"/>
+        <path d="M 53 14 L 40 23 L 53 32"/>
+      </g>
+    </svg>
+    <h1>Vinicius Mendes</h1>
+    <p class="handle">@vbmendes</p>
+    <p class="bio">Staff Engineer na Loadsmart. Palestras, newsletter e redes.</p>
+  </div>
+  <p class="pe">vbmendes.dev</p>
+</div>
+</body>
+</html>
