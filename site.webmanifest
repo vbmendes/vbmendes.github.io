@@ -1,0 +1,13 @@
+{
+  "name": "vbmendes",
+  "short_name": "vbmendes",
+  "description": "Vinicius Mendes — newsletter, palestras e redes.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F7",
+  "theme_color": "#00636B",
+  "icons": [
+    { "src": "/icone-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icone-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
