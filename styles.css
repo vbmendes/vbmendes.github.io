@@ -338,6 +338,8 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: .14em;
   color: var(--dim);
 }
+.rodape a { transition: color .16s ease; }
+.rodape a:hover { color: var(--accent); }
 
 /* ---------- ajustes de viewport ---------- */
 
@@ -347,16 +349,29 @@ a { color: inherit; text-decoration: none; }
   .redes { gap: .6rem; }
 }
 
-/* As sete redes cabem numa linha só. Deixar quebrar joga um ícone órfão
-   para a segunda linha e desequilibra o cabeçalho, então o botão encolhe
-   antes disso — sem passar do mínimo confortável para o toque. */
-@media (max-width: 25rem) {
-  .redes { --icone: 40px; gap: .3rem; }
-  .redes svg { width: 18px; height: 18px; }
+/* Os oito contatos cabem numa linha só até uns 360px, com o botão encolhendo
+   antes de deixar quebrar. Abaixo disso ele quebra — e tudo bem: oito quebram
+   em 4+4, que é simétrico. Foram sete que precisaram desta afinação, porque
+   sete quebravam em 6+1 e jogavam um ícone órfão na segunda linha. */
+@media (max-width: 29rem) {
+  .redes { --icone: 38px; gap: .25rem; }
+  .redes svg { width: 17px; height: 17px; }
 }
-@media (max-width: 21rem) {
-  .redes { --icone: 36px; gap: .25rem; }
+@media (max-width: 23rem) {
+  .redes { --icone: 36px; gap: .2rem; }
   .redes svg { width: 16px; height: 16px; }
+}
+
+/* Abaixo de ~352px não existe combinação de tamanho e folga que caiba oito
+   sem encolher o botão demais para o dedo. Aqui a linha quebra de propósito, e
+   o max-width força 4+4 em vez do 7+1 que o flex faria sozinho: se vai
+   quebrar, que quebre simétrico. O valor cabe quatro botões e três folgas,
+   nunca um quinto. */
+@media (max-width: 22rem) {
+  .redes {
+    max-width: 10rem;
+    margin-inline: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
