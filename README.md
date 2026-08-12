@@ -118,6 +118,24 @@ Segue o sistema operacional, via `prefers-color-scheme`. Não há botão de troc
 arquivos. Convertê-las para `woff2` corta algo em torno de 60% do peso e é a otimização
 mais óbvia se a página começar a pesar.
 
+As duas são licenciadas em SIL Open Font License 1.1 — uso comercial liberado, self-hosting
+liberado. A licença pede uma coisa em troca: **toda cópia redistribuída carrega o texto da
+licença e o aviso de copyright**. Publicar os `.ttf` neste repositório e servi-los por HTTP
+é redistribuir, então `OFL-Poppins.txt` e `OFL-JetBrainsMono.txt` vivem ao lado dos
+binários e não podem sair dali.
+
+| fonte | copyright | licença |
+|---|---|---|
+| Poppins | 2020 The Poppins Project Authors | `fonts/OFL-Poppins.txt` |
+| JetBrains Mono | 2020 The JetBrains Mono Project Authors | `fonts/OFL-JetBrainsMono.txt` |
+
+Se um dia as fontes virarem `woff2`, ou se entrar uma família nova, o arquivo de licença
+correspondente vem junto — e o aviso de copyright tem que bater com o build que está sendo
+servido, não com o de outra versão da mesma fonte.
+
+Texto convertido em curvas dentro de um SVG não entra nessa regra: contorno de glifo é
+parte do documento, não é distribuir a fonte.
+
 ## Publicar
 
 O GitHub Pages serve a raiz deste repositório na branch `main`. Não há workflow nem passo
