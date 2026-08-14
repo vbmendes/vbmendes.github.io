@@ -1,7 +1,8 @@
 # site — página índice de vbmendes.dev
 
-Substitui o `linktr.ee/vbmendes`: uma página só, estática, sem build e sem JavaScript.
-Abrir `index.html` num servidor já é o site inteiro.
+Substitui o `linktr.ee/vbmendes`: estático, sem build, sem package manager. A página
+índice — `index.html` — não tem uma linha de JavaScript. As páginas de palestra em
+`palestras/` são a exceção e rodam reveal.js; ver [Palestras](#palestras).
 
 ```sh
 make dev              # sobe em http://localhost:8000 e abre o navegador
@@ -20,6 +21,7 @@ abrir o arquivo direto pelo `file://` não carrega o CSS.
 | o quê | onde |
 |---|---|
 | links, textos, ordem das palestras | `index.html` |
+| slides de uma palestra | nada aqui — é saída gerada, ver [Palestras](#palestras) |
 | cor, tipo, espaçamento | `styles.css`, no bloco `:root` |
 | ícones das redes | `<defs>` no topo do `index.html` |
 | foto de fundo | `.foto` no `styles.css`, arquivo em `photos/` |
@@ -110,7 +112,58 @@ sem instalar nada de forma permanente — empacota os quatro tamanhos.
 ## Tema claro e escuro
 
 Segue o sistema operacional, via `prefers-color-scheme`. Não há botão de troca — seria o
-único JavaScript da página.
+único JavaScript da página índice, e ela continua sem nenhum.
+
+Nas páginas de palestra o esquema vale só para a moldura — botões, índice, letterbox. Os
+slides são imagem: o tema deles foi decidido na hora de gerar e não muda com o do sistema.
+
+## Palestras
+
+Cada palestra é uma pasta em `palestras/<evento>-<ano>/` com o próprio `index.html`, os
+slides em WebP e o `og.jpg` do card de compartilhamento. É o único lugar do site com
+subpágina, e o único com JavaScript.
+
+```
+palestras/
+├── deck.css                    a moldura, compartilhada por todas
+├── deck.js                     idem — sumiço da moldura e tela cheia
+├── vendor/reveal-6.0.1/        reveal.js, reveal.css, reset.css, LICENSE
+└── rogadx-2026/
+    ├── index.html
+    ├── og.jpg
+    └── slides/01.webp … 51.webp
+```
+
+**Tudo aqui é gerado.** `index.html`, `deck.css`, `deck.js` e os WebP saem de uma
+ferramenta fora deste repositório, a partir do roteiro da palestra, e são escritos direto
+aqui — esta pasta é o único lugar onde eles existem. Editar qualquer um deles à mão
+funciona até a próxima publicação, que sobrescreve. O que se edita aqui é o card em
+`index.html` da raiz, que aponta para a rota.
+
+Republicar uma palestra reescreve `slides/` inteiro, para que um slide tirado do roteiro
+não fique órfão sendo servido. O resto da pasta é preservado.
+
+**A moldura sai de cena sozinha.** Três segundos de mouse parado e some tudo que não é
+slide — o link de volta, o índice, o botão de tela cheia, as setas, a barra de progresso e
+a numeração. O primeiro movimento do mouse traz de volta. O cursor acompanha, via o
+`hideInactiveCursor` do próprio reveal. Só vale onde existe ponteiro: no toque não há
+`mousemove` para desfazer, então lá a moldura fica.
+
+**Tela cheia** tem botão no canto e o atalho `F`, que é do reveal. `Esc` sai — dos dois.
+
+**reveal.js entra versionado à mão**, porque o site não tem package manager. São três
+arquivos de `reveal.js@6.0.1`, 184 KB no total: `reveal.js` (build UMD, roda em
+`<script src>` sem bundler), `reveal.css` e `reset.css`. Nenhum plugin e nenhum tema — todo
+slide é imagem full-bleed, e a moldura é o `deck.css`. A versão está no nome da pasta de
+propósito: atualizar é criar a pasta da versão nova e apontar o gerador para ela, nunca
+sobrescrever por baixo de uma página no ar.
+
+A licença é MIT e pede o aviso de copyright junto com o código redistribuído — mesma regra
+das fontes. Por isso `vendor/reveal-6.0.1/LICENSE` existe e não pode sair dali.
+
+Os slides não carregam de uma vez: o reveal só busca os vizinhos do slide atual
+(`viewDistance`). São 51 imagens numa palestra; sem isso a página abriria baixando o deck
+inteiro.
 
 ## Fontes
 
@@ -141,10 +194,15 @@ parte do documento, não é distribuir a fonte.
 O GitHub Pages serve a raiz deste repositório na branch `main`. Não há workflow nem passo
 de build: o que está aqui é o que vai para o ar, e um `git push` publica.
 
-- `CNAME` fixa o domínio em `www.vbmendes.dev`. Ele precisa continuar existindo — sem o
+- `CNAME` fixa o domínio no apex, `vbmendes.dev`. Ele precisa continuar existindo — sem o
   arquivo, o domínio se perde na próxima publicação.
-- `vbmendes.dev` (sem `www`) redireciona para `www`. Quem faz isso é o próprio Pages,
-  desde que o apex tenha os registros A apontando para ele.
+- `www.vbmendes.dev` redireciona para o apex. Quem faz isso é o próprio Pages, desde que o
+  `www` tenha o CNAME apontando para `vbmendes.github.io`.
+- **Pendência:** as URLs absolutas do HTML (canonical, `og:url`, `og:image`) ainda dizem
+  `https://www.vbmendes.dev/`, que é o lado que redireciona. Funciona, mas cada
+  compartilhamento passa por um 301 e o canonical aponta para uma URL que não é a final.
+  Alinhar as duas coisas é trocar `www.vbmendes.dev` por `vbmendes.dev` no `index.html`,
+  no `tools/og-card.html` e no gerador das páginas de palestra.
 - `.nojekyll` desliga o Jekyll. Sem ele o Pages tenta processar a pasta e ignora arquivos
   começados por `_`.
 
