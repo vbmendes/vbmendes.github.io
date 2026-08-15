@@ -4,10 +4,10 @@
    produz. Editar aqui não adianta — a próxima publicação de uma
    palestra sobrescreve.
 
-   O deck em si é imagem: os slides já chegam com a cor, a tipografia
-   e o layout resolvidos pelo tokens.css. Aqui só existe o que fica
-   em volta — letterbox, índice, o link de volta e os controles do
-   reveal repintados em petróleo.
+   O deck em si é HTML vivo: cor, tipografia e layout do slide vêm
+   do tokens.css, o mesmo arquivo que o rasterizador usa. Aqui só
+   existe o que fica em volta — letterbox, índice, o link de volta e
+   os controles do reveal repintados em petróleo.
 
    Não damos <link> em /styles.css de propósito: as regras de body e
    .pagina de lá disputariam o layout com o reveal.
@@ -57,21 +57,34 @@
   }
 }
 
+/* O reveal mede esta caixa para decidir a escala do slide, então ela precisa
+   ser a área realmente visível. No celular `100%` resolve contra o viewport
+   grande, o que conta a altura da barra do navegador mesmo enquanto ela está
+   na frente: o slide nascia alto demais e a última faixa ficava atrás da
+   barra. `dvh` acompanha a barra recolhendo. A página não rola, então o valor
+   é estável na prática e não fica remedindo a cada gesto. */
 html, body { height: 100%; }
+@supports (height: 100dvh) {
+  html, body { height: 100dvh; }
+}
 
+/* A moldura preta em volta do slide.
+
+   O slide é 16:9 e a tela quase nunca é. O reveal escala o slide para caber
+   inteiro e centraliza; o que sobra é esta cor. Num celular em pé sobra
+   muito, e é aí que ela vira de fato uma tarja em cima e outra embaixo.
+
+   É tinta em qualquer esquema, e não `var(--bg)`: a faixa é moldura de
+   projeção, como a de um vídeo, e trocar de cor com o tema do sistema faria
+   o slide claro nadar num campo claro, sem borda nenhuma para o olho achar.
+   Os chips continuam legíveis porque são pílulas sólidas, não texto solto. */
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--ink);
   color: var(--fg);
   font-family: var(--display);
   -webkit-font-smoothing: antialiased;
 }
-
-/* A cor da faixa fora do slide vem do data-background-color de cada
-   <section>, que o gerador tira do tema do slide. Aqui só garantimos que a
-   imagem apareça inteira: `contain` é o que impede o corte quando a janela
-   não é 16:9. */
-.reveal .slide-background-content { background-repeat: no-repeat; }
 
 /* Só imagem: o conteúdo do slide é o <h2> para leitor de tela e busca. */
 .sr-only {
@@ -243,11 +256,20 @@ body {
   line-height: 1.3;
 }
 
-@media (max-width: 34rem) {
-  /* Sem ponteiro não há hover nem o sumiço por ociosidade — a moldura fica. */
+/* Sem ponteiro não há hover para acender o chip, nem `mousemove` para desfazer
+   o sumiço por ociosidade: a moldura fica, e fica legível.
+
+   A condição é `hover: none` e não largura. Largura errava o caso mais comum:
+   um celular deitado tem 844px, passava longe de qualquer limiar de "telefone"
+   e os botões ficavam nos 32% de opacidade para sempre, sem hover que os
+   trouxesse de volta. */
+@media (hover: none) {
   .chip { opacity: 1; }
-  .pdf .peso { display: none; }                     /* espaço curto: só o rótulo */
-  .reveal .controls { display: none; }              /* no toque, o gesto basta */
+}
+
+/* Espaço curto: fica o rótulo, sai o peso do arquivo. */
+@media (max-width: 34rem) {
+  .pdf .peso { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

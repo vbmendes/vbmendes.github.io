@@ -599,6 +599,13 @@
     progress: true,
     slideNumber: 'c/t',
     transition: 'slide',
+    // Abaixo de 435px de largura o reveal troca sozinho para a visão de
+    // rolagem, que empilha os slides numa coluna. É uma decisão razoável para
+    // deck de texto e errada para este: os slides são 16:9 com arte sangrando,
+    // e empilhados viram uma tira que não cabe em lugar nenhum. Em pé o certo
+    // é o slide pequeno e centrado, com tarja em cima e embaixo — que é o que
+    // o reveal já faz quando a gente não deixa ele mudar de visão.
+    scrollActivationWidth: null,
     // O cursor some junto com a moldura, no mesmo tempo — ver o deck.js.
     hideInactiveCursor: true,
     hideCursorTime: 3000

@@ -125,6 +125,31 @@ body{ background:#33383D }
   padding:var(--margem);
 }
 
+/* `.slide` é nome global, e o reveal.js usa o mesmo.
+
+   Ele escreve o nome da transição como classe no próprio invólucro: com
+   `transition: 'slide'`, o `<div class="reveal">` vira
+   `<div class="reveal slide center ...">` e passa a casar com a regra acima.
+   O invólucro virava uma caixa fixa de 1920x1080 dentro de uma janela de 390,
+   e como é ele que o reveal mede para decidir a escala, a conta dava 1 e o
+   deck não encolhia em tela nenhuma menor que Full HD. No celular o slide
+   saía cortado pela metade.
+
+   O deck local nunca sofreu porque usa `transition: 'none'` — o que quer
+   dizer que o mesmo bug voltaria no dia em que alguém trocasse a transição
+   lá. Por isso a defesa mora aqui, ao lado da regra que a exige, e não na
+   configuração de um dos dois decks.
+
+   No rasterizador não existe `.reveal`, então isto é inerte lá. */
+.reveal.slide{
+  width:100%;
+  height:100%;
+  padding:0;
+  display:block;
+  background:none;
+  isolation:auto;
+}
+
 /* ------------------------------------------------ peças comuns */
 
 .kicker{
