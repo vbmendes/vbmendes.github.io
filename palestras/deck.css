@@ -110,9 +110,7 @@ body {
 
    `visibility` junto com `opacity` para o que sumiu não continuar clicável:
    um botão invisível ainda intercepta o clique que ia para o slide. */
-.sem-moldura .voltar,
-.sem-moldura .tela-cheia,
-.sem-moldura .indice > summary,
+.sem-moldura .chip,
 .sem-moldura .reveal .controls,
 .sem-moldura .reveal .progress,
 .sem-moldura .reveal .slide-number {
@@ -121,13 +119,27 @@ body {
   transition: opacity .45s ease, visibility 0s linear .45s;
 }
 
-/* --- link de volta e botões ---------------------------------------------- */
-.voltar,
-.tela-cheia,
-.indice > summary {
+/* --- link de volta e botões ----------------------------------------------
+   Os da direita vão num flex, para que entrar ou sair um botão não obrigue a
+   recalcular o `right` de todos os outros na mão. */
+.voltar {
   position: fixed;
   top: 1rem;
+  left: 1rem;
   z-index: 40;
+}
+
+.cromo-dir {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+.chip {
   font-family: var(--mono);
   font-size: .68rem;
   letter-spacing: .14em;
@@ -145,20 +157,22 @@ body {
   transition: opacity .18s ease;
 }
 
-.voltar { left: 1rem; }
-.indice > summary { right: 4.35rem; cursor: pointer; list-style: none; }
+.indice > summary { cursor: pointer; list-style: none; }
 .indice > summary::-webkit-details-marker { display: none; }
 
-.voltar:hover, .voltar:focus-visible,
-.tela-cheia:hover, .tela-cheia:focus-visible,
-.indice > summary:hover, .indice > summary:focus-visible,
+.chip:hover, .chip:focus-visible,
 .indice[open] > summary { opacity: 1; color: var(--accent); }
+
+/* --- link do PDF ---------------------------------------------------------
+   O peso vai no rótulo: 17 MB começando a baixar sem aviso, numa rede de
+   evento, é uma surpresa ruim. */
+.pdf { display: flex; align-items: baseline; gap: .45rem; }
+.pdf .peso { opacity: .6; letter-spacing: .08em; }
 
 /* --- botão de tela cheia -------------------------------------------------
    O reveal já tem o atalho F, mas nada visível. Quem chega pelo link não
    adivinha um atalho. */
 .tela-cheia {
-  right: 1rem;
   display: grid;
   place-items: center;
   width: 2.35rem;
@@ -231,16 +245,17 @@ body {
 
 @media (max-width: 34rem) {
   /* Sem ponteiro não há hover nem o sumiço por ociosidade — a moldura fica. */
-  .voltar, .tela-cheia, .indice > summary { opacity: 1; }
+  .chip { opacity: 1; }
+  .pdf .peso { display: none; }                     /* espaço curto: só o rótulo */
   .reveal .controls { display: none; }              /* no toque, o gesto basta */
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .voltar, .tela-cheia, .indice > summary, .indice a,
+  .chip, .indice a,
   .reveal .controls, .reveal .progress, .reveal .slide-number { transition: none; }
   /* O sumiço continua — quem pediu menos movimento não pediu mais interface. */
 }
 
 @media print {
-  .voltar, .tela-cheia, .indice { display: none; }
+  .voltar, .cromo-dir { display: none; }
 }

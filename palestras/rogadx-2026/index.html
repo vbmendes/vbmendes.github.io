@@ -28,38 +28,45 @@
 </head>
 <body>
 
-<a class="voltar" href="/">← vbmendes.dev</a>
+<a class="chip voltar" href="/">← vbmendes.dev</a>
 
-<button class="tela-cheia" type="button" aria-pressed="false" title="Tela cheia (F)">
-  <span class="sr-only">Tela cheia</span>
-  <svg class="entrar" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
-       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-    <path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4"/>
-  </svg>
-  <svg class="sair" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
-       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-    <path d="M5.5 1.5v4h-4M14.5 5.5h-4v-4M10.5 14.5v-4h4M1.5 10.5h4v4"/>
-  </svg>
-</button>
+<!-- Os chips da direita ficam num flex: assim entrar ou sair um botão não
+     obriga a recalcular `right` de todos os outros na mão. -->
+<div class="cromo-dir">
+  <a class="chip pdf" href="rogadx-2026.pdf" target="_blank" rel="noopener"
+     title="Abrir os slides em PDF (18.1 MB)">PDF <span class="peso">18.1 MB</span></a>
 
-<!-- O índice é <details>: o abre/fecha é do navegador. Os links mudam o hash
-     e o reveal.js reage sozinho. -->
-<details class="indice">
-  <summary>Seções</summary>
-  <nav>
-    <ol>
-      <li><a href="#/o-que-e-vibe-coding"><span class="salto-titulo">O que é Vibe Coding?</span></a></li>
-      <li><a href="#/autonomia"><span class="kicker">superpoder 01</span><span class="salto-titulo">Autonomia</span></a></li>
-      <li><a href="#/diversao"><span class="kicker">superpoder 02</span><span class="salto-titulo">Diversão</span></a></li>
-      <li><a href="#/opcionalidade"><span class="kicker">superpoder 03</span><span class="salto-titulo">Opcionalidade</span></a></li>
-      <li><a href="#/rapidez"><span class="kicker">superpoder 04</span><span class="salto-titulo">Rapidez</span></a></li>
-      <li><a href="#/cada-sistema-tem-pelo-menos-um-gargalo"><span class="kicker">teoria das restrições</span><span class="salto-titulo">Cada sistema tem pelo menos um gargalo</span></a></li>
-      <li><a href="#/ambicao"><span class="kicker">superpoder 05</span><span class="salto-titulo">Ambição</span></a></li>
-      <li><a href="#/como-eu-faco"><span class="salto-titulo">Como eu faço?</span></a></li>
-      <li><a href="#/o-que-pode-dar-errado"><span class="salto-titulo">O que pode dar errado?</span></a></li>
-    </ol>
-  </nav>
-</details>
+  <!-- O índice é <details>: o abre/fecha é do navegador. Os links mudam o hash
+       e o reveal.js reage sozinho. -->
+  <details class="indice">
+    <summary class="chip">Seções</summary>
+    <nav>
+      <ol>
+        <li><a href="#/o-que-e-vibe-coding"><span class="salto-titulo">O que é Vibe Coding?</span></a></li>
+        <li><a href="#/autonomia"><span class="kicker">superpoder 01</span><span class="salto-titulo">Autonomia</span></a></li>
+        <li><a href="#/diversao"><span class="kicker">superpoder 02</span><span class="salto-titulo">Diversão</span></a></li>
+        <li><a href="#/opcionalidade"><span class="kicker">superpoder 03</span><span class="salto-titulo">Opcionalidade</span></a></li>
+        <li><a href="#/rapidez"><span class="kicker">superpoder 04</span><span class="salto-titulo">Rapidez</span></a></li>
+        <li><a href="#/cada-sistema-tem-pelo-menos-um-gargalo"><span class="kicker">teoria das restrições</span><span class="salto-titulo">Cada sistema tem pelo menos um gargalo</span></a></li>
+        <li><a href="#/ambicao"><span class="kicker">superpoder 05</span><span class="salto-titulo">Ambição</span></a></li>
+        <li><a href="#/como-eu-faco"><span class="salto-titulo">Como eu faço?</span></a></li>
+        <li><a href="#/o-que-pode-dar-errado"><span class="salto-titulo">O que pode dar errado?</span></a></li>
+      </ol>
+    </nav>
+  </details>
+
+  <button class="chip tela-cheia" type="button" aria-pressed="false" title="Tela cheia (F)">
+    <span class="sr-only">Tela cheia</span>
+    <svg class="entrar" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <path d="M1.5 5.5v-4h4M10.5 1.5h4v4M14.5 10.5v4h-4M5.5 14.5h-4v-4"/>
+    </svg>
+    <svg class="sair" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <path d="M5.5 1.5v4h-4M14.5 5.5h-4v-4M10.5 14.5v-4h4M1.5 10.5h4v4"/>
+    </svg>
+  </button>
+</div>
 
 <div class="reveal">
   <div class="slides">

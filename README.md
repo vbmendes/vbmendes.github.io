@@ -131,8 +131,13 @@ palestras/
 └── rogadx-2026/
     ├── index.html
     ├── og.jpg
+    ├── rogadx-2026.pdf          o deck inteiro, oferecido pelo chip "PDF"
     └── slides/01.webp … 51.webp
 ```
+
+O PDF é a maior coisa do repositório — 18 MB, uma imagem sem perda por página.
+Ele existe porque a página o oferece por link, e sai na mesma passada dos WebP para
+que download e slides nunca discordem. O chip mostra o peso no rótulo.
 
 **Tudo aqui é gerado.** `index.html`, `deck.css`, `deck.js` e os WebP saem de uma
 ferramenta fora deste repositório, a partir do roteiro da palestra, e são escritos direto

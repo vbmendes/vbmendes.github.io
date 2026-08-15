@@ -23,11 +23,19 @@
   var temPonteiro = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
   function segurando() {
-    // Com o índice aberto, ou com o foco dentro da moldura, esconder tira da
-    // frente justamente o que a pessoa está usando.
+    // Com o índice aberto, esconder tira da frente o que está sendo usado.
     if (indice && indice.hasAttribute('open')) return true;
-    var foco = document.activeElement;
-    return !!(foco && foco.closest && foco.closest('.voltar, .tela-cheia, .indice, .reveal .controls'));
+
+    // Só foco de teclado segura a moldura — daí `:focus-visible` e não
+    // `:focus`. O foco que sobra de um clique não é alguém navegando pelos
+    // botões, é o botão que acabou de ser usado: ele fica focado e, com
+    // `:focus`, a moldura nunca mais sumiria. Era o que acontecia ao entrar em
+    // tela cheia, que só se faz clicando.
+    return !!document.querySelector(
+      '.voltar:focus-visible, .tela-cheia:focus-visible, ' +
+      '.indice summary:focus-visible, .indice a:focus-visible, ' +
+      '.reveal .controls button:focus-visible'
+    );
   }
 
   function esconde() {
