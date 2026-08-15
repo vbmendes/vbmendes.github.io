@@ -1,0 +1,9 @@
+/* Gerado. A ordem abaixo é o que decide toda disputa de estilo:
+   `slide` vence `cola`, que vence `reveal` — independente de
+   especificidade e de ordem de carregamento. Ver o cola.css. */
+@layer reveal, cola, slide;
+
+@import url("/palestras/vendor/reveal-6.0.1/reset.css") layer(reveal);
+@import url("/palestras/vendor/reveal-6.0.1/reveal.css") layer(reveal);
+@import url("/palestras/cola.css") layer(cola);
+@import url("/palestras/tokens.css") layer(slide);

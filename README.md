@@ -119,34 +119,47 @@ slides são imagem: o tema deles foi decidido na hora de gerar e não muda com o
 
 ## Palestras
 
-Cada palestra é uma pasta em `palestras/<evento>-<ano>/` com o próprio `index.html`, os
-slides em WebP e o `og.jpg` do card de compartilhamento. É o único lugar do site com
+Cada palestra é uma pasta em `palestras/<evento>-<ano>/`. É o único lugar do site com
 subpágina, e o único com JavaScript.
+
+**Os slides são HTML, não imagem.** Cada um é uma caixa de 1920x1080 com texto de
+verdade — selecionável, buscável, legível por leitor de tela — que o reveal.js escala
+para a janela. As imagens que aparecem neles são só a arte.
 
 ```
 palestras/
 ├── deck.css                    a moldura, compartilhada por todas
 ├── deck.js                     idem — sumiço da moldura e tela cheia
+├── camadas.css                 declara a ordem da cascata e importa as folhas
+├── cola.css                    impede o reveal de mandar no que é do slide
+├── tokens.css                  cor, tipo e layout do slide
 ├── vendor/reveal-6.0.1/        reveal.js, reveal.css, reset.css, LICENSE
 └── rogadx-2026/
     ├── index.html
     ├── og.jpg
     ├── rogadx-2026.pdf          o deck inteiro, oferecido pelo chip "PDF"
-    └── slides/01.webp … 51.webp
+    └── assets/                  a arte usada nos slides, em WebP
 ```
 
-O PDF é a maior coisa do repositório — 18 MB, uma imagem sem perda por página.
-Ele existe porque a página o oferece por link, e sai na mesma passada dos WebP para
-que download e slides nunca discordem. O chip mostra o peso no rótulo.
+**A ordem da cascata é `camadas.css`, e não é decoração.** `reveal`, depois `cola`,
+depois `slide`. Sem camada as regras empatam em especificidade — `.reveal .slide img` e
+`.arte img` são ambas (0,2,1) — e quem carrega por último ganha, o que já fez a arte
+sair sangrando sem recuo nem borda. O `deck.css` fica fora de camada de propósito: a
+moldura é do site, não do slide, e as duas não disputam seletor.
 
-**Tudo aqui é gerado.** `index.html`, `deck.css`, `deck.js` e os WebP saem de uma
+O PDF é a maior coisa do repositório — 18 MB, uma imagem sem perda por página. Ele
+existe porque a página o oferece por link, e sai na mesma passada dos slides para que
+download e tela nunca discordem. O chip mostra o peso no rótulo. Já a arte dos slides
+cabe em 2,3 MB: cada imagem é servida uma vez, mesmo aparecendo em cinco slides.
+
+**Tudo aqui é gerado.** `index.html`, as folhas de estilo e o `assets/` saem de uma
 ferramenta fora deste repositório, a partir do roteiro da palestra, e são escritos direto
 aqui — esta pasta é o único lugar onde eles existem. Editar qualquer um deles à mão
 funciona até a próxima publicação, que sobrescreve. O que se edita aqui é o card em
 `index.html` da raiz, que aponta para a rota.
 
-Republicar uma palestra reescreve `slides/` inteiro, para que um slide tirado do roteiro
-não fique órfão sendo servido. O resto da pasta é preservado.
+Republicar uma palestra reescreve `assets/` inteiro, para que uma imagem tirada do
+roteiro não fique órfã sendo servida. O resto da pasta é preservado.
 
 **A moldura sai de cena sozinha.** Três segundos de mouse parado e some tudo que não é
 slide — o link de volta, o índice, o botão de tela cheia, as setas, a barra de progresso e
@@ -158,17 +171,18 @@ a numeração. O primeiro movimento do mouse traz de volta. O cursor acompanha, 
 
 **reveal.js entra versionado à mão**, porque o site não tem package manager. São três
 arquivos de `reveal.js@6.0.1`, 184 KB no total: `reveal.js` (build UMD, roda em
-`<script src>` sem bundler), `reveal.css` e `reset.css`. Nenhum plugin e nenhum tema — todo
-slide é imagem full-bleed, e a moldura é o `deck.css`. A versão está no nome da pasta de
+`<script src>` sem bundler), `reveal.css` e `reset.css`. Nenhum plugin e nenhum tema — o
+slide traz o próprio CSS, e a moldura é o `deck.css`. A versão está no nome da pasta de
 propósito: atualizar é criar a pasta da versão nova e apontar o gerador para ela, nunca
 sobrescrever por baixo de uma página no ar.
 
 A licença é MIT e pede o aviso de copyright junto com o código redistribuído — mesma regra
 das fontes. Por isso `vendor/reveal-6.0.1/LICENSE` existe e não pode sair dali.
 
-Os slides não carregam de uma vez: o reveal só busca os vizinhos do slide atual
-(`viewDistance`). São 51 imagens numa palestra; sem isso a página abriria baixando o deck
-inteiro.
+A arte não carrega de uma vez: cada `<img>` do slide leva `loading="lazy"`, e fora do
+slide corrente o reveal deixa tudo em `display:none`, que é o que faz o navegador segurar
+o download até a hora. As fontes vêm de `/fonts`, servidas para o site inteiro — as
+páginas de palestra não guardam cópia.
 
 ## Fontes
 

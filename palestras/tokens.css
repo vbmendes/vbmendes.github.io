@@ -1,0 +1,618 @@
+/* ============================================================
+   tokens.css — único lugar para mexer em cor, tipo e ritmo do
+   slide de palestra. Alterar aqui muda todos os layouts de uma vez.
+
+   A cor e a semântica vêm de identidade-visual/references/cor.md.
+   O que é desta skill é a escala: um slide de palestra é lido a
+   dez metros, num projetor de contraste ruim, por alguém que tem
+   sete segundos de atenção. Tudo é maior do que parece necessário
+   na tela do notebook — é assim mesmo.
+   ============================================================ */
+
+/* As fontes vivem em logo/fonts/, fonte única da identidade. */
+@font-face { font-family:"Poppins"; src:url("/fonts/Poppins-Regular.ttf"); font-weight:400 }
+@font-face { font-family:"Poppins"; src:url("/fonts/Poppins-Medium.ttf");  font-weight:500 }
+@font-face { font-family:"Poppins"; src:url("/fonts/Poppins-Bold.ttf");    font-weight:700 }
+@font-face { font-family:"JetBrains Mono"; src:url("/fonts/JetBrainsMono-Regular.ttf"); font-weight:400 }
+@font-face { font-family:"JetBrains Mono"; src:url("/fonts/JetBrainsMono-Medium.ttf");  font-weight:500 }
+
+:root{
+  --ink:    #101418;
+  --paper:  #FAF9F7;
+  --accent: #00636B;   /* petróleo — a voz padrão */
+  --contra: #A56A00;   /* âmbar — o contraponto, nunca decoração */
+
+  /* derivadas: recalculadas pelo tema, não editar isoladamente */
+  --bg:   var(--paper);
+  --fg:   var(--ink);
+  --dim:  #6E757B;
+  --hair: #DFDCD7;
+  --card: #F1EFEB;
+
+  /* A cor de sinalização — kicker, marcador, aspas, algarismo. Quase sempre
+     é o acento, mas existe separada porque no tema `acento` o fundo É o
+     acento: sem isto, o kicker sairia petróleo sobre petróleo.
+
+     Vai em hex literal em cada tema, e não como `var(--accent)`, porque
+     propriedade customizada é substituída no elemento em que é declarada:
+     `--sinal: var(--accent)` aqui congelaria o petróleo do :root e nenhum
+     tema abaixo conseguiria trocá-lo. Foi o que fez o `contraponto` do slide
+     de citação sair petróleo em vez de âmbar. */
+  --sinal: #00636B;
+
+  /* --- tipo -------------------------------------------------
+     Escala em px. O slide é sempre 1920x1080, então proporção e
+     medida absoluta dão no mesmo, e px é o que sobrevive fora do
+     rasterizador: dentro do reveal.js o slide é escalado por
+     `transform`, e `vw` — que era a unidade daqui — passaria a
+     medir a janela do navegador em vez do slide. `cqw` resolveria
+     isso para os descendentes, mas não para o próprio `.slide`,
+     que usa `--margem` no seu padding e não pode ser o próprio
+     container. Daí px, que não depende de contexto nenhum.
+     A conversão foi 1vw = 19.2px, exata. */
+  --display: "Poppins", system-ui, sans-serif;
+  --mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  --t-kicker: 24px;   /*  24px */
+  --t-titulo: 92.16px;    /*  92px */
+  --t-secao:  134.4px;    /* 134px */
+  --t-decl:   107.52px;    /* 108px */
+  --t-sub:    46.08px;    /*  46px */
+  --t-corpo:  39.36px;   /*  39px — o piso do legível na projeção */
+  --t-item:   42.24px;    /*  42px */
+  --t-cite:   67.2px;    /*  67px */
+  --t-dado:   157.44px;    /* 157px */
+  --t-rodape: 20.16px;   /*  20px */
+
+  /* --- ritmo ------------------------------------------------ */
+  --margem: 96px;      /*  96px */
+  --gap:    42.24px;
+  --raio:   22.08px;
+}
+
+.tema-escuro{
+  --bg:     var(--ink);
+  --fg:     var(--paper);
+  --accent: #3BBFB2;
+  --contra: #F0A93A;
+  --dim:    #8A9198;
+  --hair:   #262C33;
+  --card:   #1A2027;
+  --sinal:  #3BBFB2;
+}
+
+.tema-acento{
+  --bg:     var(--accent);
+  --fg:     var(--paper);
+  --contra: #F0A93A;
+  --dim:    rgba(250,249,247,.62);
+  --hair:   rgba(250,249,247,.20);
+  --card:   rgba(255,255,255,.10);
+  --sinal:  rgba(250,249,247,.80);
+}
+
+/* Repinta o acento com o âmbar. É o slide que complica a tese —
+   o dado ruim, a limitação, o alerta. Use com parcimônia: numa
+   palestra de 50 slides, uns cinco, não vinte. */
+.contraponto{ --accent: var(--contra); --sinal: #A56A00 }
+.tema-escuro.contraponto{ --sinal: #F0A93A }
+
+.tema-acento.contraponto{
+  --bg:    var(--contra);
+  --fg:    var(--ink);
+  --dim:   rgba(16,20,24,.66);
+  --hair:  rgba(16,20,24,.22);
+  --card:  rgba(16,20,24,.08);
+  --sinal: rgba(16,20,24,.72);
+}
+
+/* ============================================================ */
+
+*{ box-sizing:border-box; margin:0; padding:0 }
+
+body{ background:#33383D }
+
+.slide{
+  position:relative;
+  width:1920px;
+  height:1080px;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--display);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:var(--margem);
+}
+
+/* ------------------------------------------------ peças comuns */
+
+.kicker{
+  font-size:var(--t-kicker); font-weight:600; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--sinal);
+}
+
+.titulo{
+  font-size:var(--t-titulo); font-weight:700; line-height:1.04;
+  letter-spacing:-.02em;
+}
+
+.corpo{
+  font-size:var(--t-corpo); font-weight:400; line-height:1.5;
+  color:var(--fg); max-width:34em;
+}
+
+.sub{ font-size:var(--t-sub); font-weight:400; line-height:1.32; color:var(--dim) }
+
+strong{ font-weight:700 }
+.contra{ color:var(--contra); font-weight:600 }
+em{ font-style:normal; color:var(--sinal); font-weight:600 }
+
+/* A fonte da afirmação. Fica pequena e discreta no pé, porque
+   sustenta o argumento sem competir com ele. */
+.fonte{
+  font-size:var(--t-rodape); color:var(--dim); line-height:1.4;
+  max-width:52em; word-break:break-word;
+}
+
+/* ------------------------------------------------------ rodapé */
+
+.rodape{
+  position:absolute; left:var(--margem); right:var(--margem); bottom:calc(var(--margem)*.52);
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:var(--t-rodape); color:var(--dim);
+}
+.rodape .assinatura{ display:flex; align-items:center; gap:.7em }
+.rodape .assinatura svg{ height:1.7em; width:auto; color:var(--sinal) }
+.rodape .n{ font-variant-numeric:tabular-nums; letter-spacing:.06em }
+
+/* ------------------------------------------------------- capa */
+
+.capa{ justify-content:center }
+.capa .marca-topo{ position:absolute; top:var(--margem); left:var(--margem) }
+.capa .marca-topo svg{ height:65.28px; width:auto; color:var(--sinal) }
+.capa .titulo{ font-size:107.52px; max-width:16em }
+.capa .kicker{ margin-bottom:1.1em }
+.capa .sub{ margin-top:.7em; max-width:24em }
+.capa .creditos{
+  position:absolute; left:var(--margem); bottom:var(--margem);
+  font-size:25.92px; color:var(--dim); letter-spacing:.02em;
+}
+/* rich() emite <strong>, não <b>. O seletor antigo não pegava nada. */
+.capa .creditos strong{ color:var(--fg); font-weight:600 }
+
+/* A arte de fundo da capa é clara e lava o kicker, que é o texto menor e mais
+   colorido do slide. O scrim escurece o lado do texto e deixa a arte respirar
+   do meio para a direita — sem ele a única saída seria baixar tanto a opacidade
+   que a arte sumiria. */
+.capa .fundo::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(100deg, var(--bg) 22%, rgba(0,0,0,0) 62%);
+}
+
+/* ------------------------------------------------------ secao */
+/* O divisor. Existe para a plateia respirar e saber que virou de
+   assunto. Por isso é quase vazio — o vazio é a mensagem. */
+
+.secao{ justify-content:center; align-items:flex-start }
+.secao .titulo{ font-size:var(--t-secao); max-width:13em }
+.secao .kicker{ margin-bottom:.9em }
+.secao .sub{ margin-top:.9em; max-width:22em }
+
+/* `reserva` abre metade do slide para o GIF entrar por cima no
+   Google Slides. O PNG sai com a área realmente vazia — a guia
+   tracejada só aparece com --guias, para planejar. */
+.secao.reserva-direita{ padding-right:52%; }
+.secao.reserva-esquerda{ padding-left:52%; }
+/* Metade da largura não sustenta 134.4px: uma palavra como "Opcionalidade" ainda
+   cabe, mas uma frase quebra em quatro linhas curtas e vira poesia concreta.
+   Vale igual para `arte`, que come a mesma largura que a `reserva` — a causa é
+   a coluna estreita, não o que ocupa o outro lado. */
+.secao.reserva-direita .titulo,
+.secao.reserva-esquerda .titulo,
+.secao.com-arte .titulo{ font-size:96px; max-width:11em }
+
+.guia{
+  position:absolute; border:3px dashed var(--sinal); opacity:.55;
+  border-radius:var(--raio); display:flex; align-items:center;
+  justify-content:center; font-size:30.72px; color:var(--sinal);
+  font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+}
+
+/* ------------------------------------------------ declaracao */
+/* Uma frase, o slide inteiro, nada mais. É o soco. */
+
+.declaracao{ justify-content:center; align-items:center; text-align:center }
+.declaracao .frase{
+  font-size:var(--t-decl); font-weight:700; line-height:1.08;
+  letter-spacing:-.02em; max-width:15em;
+}
+
+/* ------------------------------------------------------ texto */
+
+.texto{ justify-content:center }
+.texto .titulo{ margin-bottom:.55em }
+.texto .corpo + .corpo{ margin-top:.8em }
+.texto .fonte{ margin-top:1.6em }
+
+/* `denso: true` para o slide que herdou um parágrafo longo e não pode ser
+   cortado. Encolhe o corpo e abre a medida. Não é o padrão de propósito: um
+   slide denso por palestra é herança, dois é hábito. */
+.texto.denso .corpo{ font-size:32.256px; line-height:1.46; max-width:42em }
+.texto.denso .titulo{ font-size:65.28px; margin-bottom:.5em }
+.lista.denso li{ font-size:33.6px }
+.lista.denso .titulo{ font-size:57.6px }
+
+/* ------------------------------------------------------ lista */
+
+/* `citando: true`. Uma frase de terceiro pode encabeçar uma lista ou um
+   divisor de seção sem virar layout `citacao` — e aí ela precisa do mesmo
+   glifo, senão a única marca de citação vira a aspa de teclado, que é
+   exatamente o que o glifo desenhado existe para evitar. */
+.lista .aspas, .secao .aspas{ color:var(--sinal); margin-bottom:.35em }
+.lista .aspas svg{ width:46.08px; height:auto }
+.secao .aspas svg{ width:61.44px; height:auto }
+
+.lista{ justify-content:center }
+.lista .titulo{ font-size:71.04px; margin-bottom:.7em; max-width:17em }
+/* A frase que a lista sustenta. Fica acima dos itens e um degrau ACIMA deles em
+   corpo: é ela que carrega o argumento, e os itens é que são o detalhamento.
+   O negrito sai do cinza para a cor do texto — é o único jeito de destacar
+   dentro de um bloco que já é --dim inteiro. */
+.lista .sub{ font-size:39.36px; margin-top:-.25em; margin-bottom:1.05em; max-width:26em }
+.lista .sub strong{ color:var(--fg) }
+.lista ul{ list-style:none; display:flex; flex-direction:column; gap:.62em }
+.lista li{
+  display:flex; align-items:baseline; gap:.72em;
+  font-size:var(--t-item); line-height:1.32;
+}
+.lista .marcador{
+  color:var(--sinal); font-weight:700; flex:none;
+  font-variant-numeric:tabular-nums; min-width:1.4em;
+}
+/* o item que carrega o argumento, marcado com "destaque" no roteiro */
+.lista li.destaque{ color:var(--contra); font-weight:600 }
+.lista li.destaque .marcador{ color:var(--contra) }
+.lista .fonte{ margin-top:1.8em }
+
+/* Com arte ao lado, o texto ocupa a esquerda e a arte sangra na
+   direita. A arte nunca entra em cartão aqui: numa palestra ela é
+   respiro, não conteúdo a ser lido. */
+.com-arte{ padding-right:44% }
+.arte{
+  position:absolute; top:0; right:0; bottom:0; width:41%;
+  display:flex; align-items:center; justify-content:center;
+}
+.arte img{ width:100%; height:100%; object-fit:cover; display:block }
+/* `contida: true` para arte que não pode ser cortada — capa de livro, print,
+   diagrama. Precisa de `width:auto` junto: sem isso a regra de cima força a
+   largura e o objeto alto encolhe até virar selo. */
+.arte.contida{ padding:calc(var(--margem)*.8) calc(var(--margem)*.7) }
+.arte.contida img{
+  width:auto; height:auto; max-width:100%; max-height:100%; object-fit:contain;
+  border-radius:var(--raio);
+}
+
+/* A citação perde um terço da medida quando divide o slide com a arte. Manter
+   o corpo de 67.2px ali é o que fazia a frase transbordar por baixo. */
+.citacao.com-arte .frase{ font-size:48.96px; max-width:100% }
+.citacao.com-arte .aspas svg{ width:61.44px }
+.lista.com-arte .titulo{ font-size:55.68px }
+.lista.com-arte .sub{ font-size:36.48px; max-width:100% }
+.lista.com-arte li{ font-size:33.6px }
+.lista.com-arte.denso li{ font-size:29.76px }
+
+/* ---------------------------------------------------- citacao */
+
+.citacao{ justify-content:center }
+.citacao .aspas{ color:var(--sinal); margin-bottom:.5em }
+.citacao .aspas svg{ width:84.48px; height:auto }
+.citacao .frase{
+  font-size:var(--t-cite); font-weight:500; line-height:1.22;
+  letter-spacing:-.012em; max-width:19em;
+}
+/* Trechos soltos da mesma fonte precisam respirar entre si, senão a plateia
+   lê os três como uma frase contínua — que é justamente o que eles não são. */
+.citacao .frase + .frase{ margin-top:.5em }
+
+/* O diagrama acima da frase, em largura cheia. Com ele a citação encolhe: o
+   par é "veja isto" seguido de "e é por isso", e nessa ordem quem manda é a
+   figura. Sem o teto de altura, um diagrama alto empurra a frase para fora. */
+/* Centralizada, não alinhada à esquerda: figura reaproveitada de outra peça
+   raramente tem a largura do slide — o espectro nasceu com 942px para o
+   carrossel — e encostada na margem ela deixa um vão à direita que lê como
+   erro de composição. No centro, o vão vira respiro simétrico. */
+.citacao .figura{
+  max-height:60%; margin-bottom:1.2em;
+  display:flex; align-items:center; justify-content:center;
+}
+.citacao .figura img{
+  max-width:100%; max-height:100%; width:auto; height:auto;
+  object-fit:contain; display:block;
+}
+.citacao:has(.figura) .frase{ font-size:48px; max-width:100% }
+.citacao:has(.figura) .aspas{ margin-bottom:.3em }
+.citacao:has(.figura) .aspas svg{ width:49.92px }
+.citacao:has(.figura) .autor{ margin-top:.6em }
+
+/* a placa de pendência, quando entra no fluxo em vez de cobrir o slide */
+.pendente.estatica{ position:static; inset:auto; height:44%; margin-bottom:1.4em }
+
+.citacao .autor{
+  margin-top:1.1em; font-size:29.76px; color:var(--sinal); font-weight:600;
+}
+.citacao .fonte{ margin-top:.7em }
+
+/* ------------------------------------------------------- dado */
+
+.dado{ justify-content:center }
+.dado .valores{ display:flex; gap:calc(var(--margem)*.9); flex-wrap:wrap; align-items:flex-start }
+.dado .bloco{ display:flex; flex-direction:column; gap:.15em; min-width:0 }
+.dado .valor{
+  font-size:var(--t-dado); font-weight:700; line-height:.92;
+  letter-spacing:-.035em; color:var(--sinal); font-variant-numeric:tabular-nums;
+}
+.dado .bloco.destaque .valor{ color:var(--contra) }
+.dado .legenda{ font-size:32.64px; line-height:1.3; color:var(--fg); max-width:11em }
+.dado .titulo{ font-size:61.44px; margin-bottom:.8em }
+/* A ressalva que comenta os números. Fica em corpo, não em rodapé: um dado que
+   complica o dado de cima não pode sair menor que ele. */
+.dado .sub{ font-size:39.36px; margin-top:1.5em; max-width:36em; color:var(--fg) }
+.dado .fonte{ margin-top:1.2em }
+.dado .sub + .fonte{ margin-top:.9em }
+
+/* O segundo degrau: os números que sustentam a manchete, não os que a disputam.
+   Grade de quatro e um degrau abaixo no corpo — perto demais do tamanho de cima
+   e o slide volta a ter seis números iguais, que é o que essa divisão resolve. */
+.dado .valores.menores{
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:calc(var(--margem)*.3) calc(var(--margem)*.5);
+}
+.dado .valores.menores .valor{ font-size:59.52px }
+.dado .valores.menores .legenda{ font-size:24px; max-width:none }
+
+/* A manchete, quando há apoio embaixo: duas colunas de largura igual em vez de
+   fila justificada à esquerda. Um par lado a lado lê como comparação — que é o
+   argumento do slide —, enquanto dois blocos encostados na esquerda leem como
+   o começo de uma lista que não terminou. */
+.dado .valores.manchete{
+  display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+  max-width:62%; gap:calc(var(--margem)*.7);
+}
+.dado .valores.manchete .legenda{ font-size:37.44px; max-width:none }
+
+/* A seta entre o antes e o depois. A coluna do meio é `auto` para a seta não
+   roubar largura dos números, e o alinhamento é pelo topo com um empurrão até a
+   meia-altura do algarismo: com `center` ela desceria para o meio do bloco, que
+   inclui a legenda, e apontaria para o vão embaixo dos números. */
+.dado .valores.manchete.com-seta{
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  max-width:76%; gap:calc(var(--margem)*.5);
+}
+.dado .seta{ color:var(--dim); align-self:start; margin-top:49.92px }
+.dado .seta svg{ width:122.88px; height:auto; display:block }
+
+/* Nomeia o grupo de baixo — de que ano ele é, de que recorte ele veio. Sem
+   isso o leitor herda o ano da manchete, que é justamente o que está em
+   contraste ali em cima.
+   As margens são em px, não em em: `em` aqui é relativo ao próprio corpo, que é
+   pequeno de propósito, e o rótulo saía colado na legenda de cima parecendo
+   uma terceira linha dela. */
+.dado .rotulo-grupo{ font-size:28.8px; color:var(--dim); margin:46.08px 0 17.28px }
+
+/* Muitos números num slide só. Vira grade de três em vez de fila que quebra:
+   com `flex-wrap` o sexto valor caía sozinho numa linha e lia como sobra. */
+.dado.denso .valores{
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:calc(var(--margem)*.45) calc(var(--margem)*.55);
+}
+.dado.denso .valor{ font-size:96px }
+.dado.denso .legenda{ font-size:25.92px; max-width:none }
+
+/* ----------------------------------------------------- imagem */
+
+.imagem{ padding:0; justify-content:flex-end }
+.imagem > img{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+/* `sangra: false` põe a imagem inteira sobre o fundo, sem cortar —
+   é o certo para diagrama e print, que precisam ser lidos.
+   O respiro de baixo é maior que o dos outros lados porque o rodapé mora lá:
+   com padding igual nos quatro lados, a borda inferior do diagrama encosta na
+   assinatura e na numeração. */
+.imagem.contida > img{
+  object-fit:contain;
+  padding:calc(var(--margem)*.6) calc(var(--margem)*.6) calc(var(--margem)*1.2);
+}
+/* sem rodapé não há o que evitar, e o diagrama pode usar a altura toda */
+.imagem.contida:not(:has(.rodape)) > img{ padding:calc(var(--margem)*.6) }
+.imagem .veu{
+  position:absolute; inset:0;
+  background:linear-gradient(to top, rgba(16,20,24,.86) 0%, rgba(16,20,24,.55) 26%, rgba(16,20,24,0) 55%);
+}
+.imagem .texto-sobre{
+  position:relative; padding:var(--margem); padding-bottom:calc(var(--margem)*1.35);
+  color:var(--paper);
+}
+.imagem .texto-sobre .titulo{ font-size:69.12px; max-width:20em }
+.imagem .texto-sobre .sub{ color:rgba(250,249,247,.82); margin-top:.4em; max-width:34em }
+.imagem .texto-sobre .kicker{ color:#3BBFB2; margin-bottom:.5em }
+
+/* A placa de figura pendente. Feia de propósito: ela não pode passar por
+   escolha de design nem sobreviver até a projeção sem alguém reparar. */
+.pendente{
+  position:absolute; inset:calc(var(--margem)*.6);
+  border:4px dashed var(--contra); border-radius:var(--raio);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:.6em; color:var(--contra); font-size:46.08px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.1em;
+}
+.pendente .arq{
+  font-family:var(--mono); font-size:23.04px; font-weight:400;
+  letter-spacing:0; text-transform:none; color:var(--dim);
+}
+
+/* ----------------------------------------------------- agenda */
+/* O acrônimo. A inicial é a âncora visual: ela é o que a plateia
+   leva para casa, então recebe o acento e o peso. */
+
+.agenda{ justify-content:center }
+.agenda .titulo{ font-size:61.44px; margin-bottom:.7em }
+.agenda .letras{ display:flex; gap:calc(var(--margem)*.5); align-items:flex-start }
+.agenda .item{ flex:1; display:flex; flex-direction:column; gap:.22em; min-width:0 }
+.agenda .inicial{
+  font-size:165.12px; font-weight:700; line-height:.86; color:var(--sinal);
+  letter-spacing:-.04em;
+}
+.agenda .palavra{ font-size:40.32px; font-weight:600; line-height:1.16 }
+.agenda .glosa{ font-size:24.96px; color:var(--dim); line-height:1.32 }
+.agenda .item.ativo .inicial{ color:var(--contra) }
+
+/* -------------------------------------------------- fechamento */
+
+.fechamento{ justify-content:center }
+/* Medida larga aqui, ao contrário do resto do deck: o que vem abaixo do título
+   são três colunas, não texto, então a linha longa não atrapalha ninguém — e
+   uma frase de fecho costuma ser comprida demais para caber em 15em sem virar
+   quatro linhas e empurrar os contatos por cima do rodapé.
+   Sem `max-width` em `em`: a medida encolheria junto com a fonte, então baixar
+   o corpo não faria caber mais caractere por linha — a frase só ficaria menor,
+   com a mesma quebra. */
+.fechamento .titulo{ font-size:57.6px; margin-bottom:.7em }
+.fechamento .linhas{ display:flex; gap:calc(var(--margem)*.8); align-items:flex-end }
+.fechamento .contatos{ display:flex; flex-direction:column; gap:.42em }
+.fechamento .contato{
+  display:flex; align-items:center; gap:.6em;
+  font-size:30.72px; line-height:1.2;
+}
+.fechamento .rede{ color:var(--sinal); font-weight:600; min-width:5.6em }
+/* A coluna do QR: marca em cima, código embaixo, ambos na mesma largura para
+   lerem como um bloco só em vez de dois elementos empilhados por acaso. */
+.fechamento .coluna-qr{
+  flex:none; width:364.8px;
+  display:flex; flex-direction:column; gap:.9em; align-items:center;
+}
+.fechamento .marca-qr{ display:flex; align-items:center; gap:.45em }
+.fechamento .marca-qr svg{ height:49.92px; width:auto; color:var(--sinal) }
+.fechamento .marca-qr span{ font-size:40.32px; font-weight:600; color:var(--fg) }
+.fechamento .qr{ width:100%; display:flex; flex-direction:column; gap:.5em; align-items:center }
+
+/* O retrato fecha o slide do lado direito, que sem ele fica com um vazio que
+   não é respiro — é sobra. Quadrado e contido, não sangrando como o do `bio`:
+   ali a pessoa é o assunto do slide, aqui ela acompanha os contatos. */
+.fechamento .retrato{
+  flex:none; width:403.2px; aspect-ratio:1;
+  border-radius:var(--raio); overflow:hidden;
+}
+.fechamento .retrato img{ width:100%; height:100%; object-fit:cover; display:block }
+.fechamento .qr svg, .fechamento .qr img{ width:100%; height:auto; display:block; border-radius:11.52px }
+.fechamento .qr-dica{ font-size:22.08px; color:var(--dim) }
+
+/* ------------------------------------------------------ chat */
+/* A conversa com a IA. A procedência é o argumento: quando o conteúdo do slide
+   é resposta de modelo, a plateia precisa ver isso na primeira olhada, e uma
+   linha de crédito no rodapé não entrega. A bolha entrega.
+
+   A pergunta vai à direita e a resposta à esquerda porque é a convenção de
+   todo aplicativo de mensagem — inverter obrigaria a plateia a decodificar o
+   que deveria ser instantâneo. */
+
+.chat{ justify-content:center; gap:30.72px }
+.chat .kicker{ margin-bottom:.4em }
+
+.chat .pergunta{ display:flex; justify-content:flex-end }
+.chat .pergunta span{
+  background:var(--sinal); color:var(--bg);
+  font-size:41.28px; font-weight:500; line-height:1.34;
+  padding:.72em 1em; max-width:64%;
+  /* o canto reto é o rabicho da bolha: aponta para quem falou */
+  border-radius:21.12px 21.12px 4.8px 21.12px;
+}
+/* Sobre fundo de acento a bolha não pode ser do acento. Vira papel sólido. */
+.tema-acento .chat .pergunta span{ background:var(--paper); color:var(--ink) }
+
+.chat .resposta{ display:flex; align-items:flex-start; gap:26.88px }
+
+.chat .avatar{
+  flex:none; width:142.08px; height:142.08px; border-radius:50%;
+  overflow:hidden; background:var(--card);
+}
+.chat .avatar img{ width:100%; height:100%; object-fit:cover; display:block }
+
+.chat .balao{
+  background:var(--card); border-radius:4.8px 21.12px 21.12px 21.12px;
+  padding:28.8px 34.56px; flex:1; min-width:0;
+}
+/* 39.36px é o piso do legível na projeção, o mesmo de --t-corpo. O balão não
+   tem licença para ficar abaixo dele só porque cabe: quem lê um slide de chat
+   está lendo a resposta inteira, não passando o olho. */
+.chat .balao p{ font-size:39.36px; line-height:1.44 }
+.chat .balao p + p{ margin-top:.65em }
+.chat .balao ul{ list-style:none; display:flex; flex-direction:column; gap:.42em }
+.chat .balao li{
+  font-size:41.28px; line-height:1.3; display:flex; gap:.6em; align-items:baseline;
+}
+.chat .balao li::before{ content:"—"; color:var(--sinal); flex:none }
+.chat .balao p + ul{ margin-top:.8em }
+
+/* A procedência fica alinhada com a bolha da resposta, não com a margem do
+   slide: ela qualifica o que está dentro do balão, e não o slide inteiro. */
+.chat .fonte{ margin-left:calc(142.08px + 26.88px) }
+
+/* --------------------------------------------------- bio */
+
+.bio{ justify-content:center; padding-right:50% }
+
+/* A foto entra pela direita e se dissolve para a esquerda, o mesmo expediente
+   do site (site/styles.css, .foto): máscara em vez de recorte, para a imagem
+   encostar no texto sem uma borda dura no meio do slide.
+   A diferença é a curva. Lá o degradê atravessa 62% da largura porque a foto é
+   atmosfera atrás do conteúdo; aqui ela é o assunto do slide, então a queda se
+   concentra perto da borda esquerda da própria foto — os stops intermediários
+   aproximam uma ease-out, e é isso que mantém a pessoa sólida em vez de
+   esmaecida pela metade.
+   Sem fade vertical de propósito: ele comeria o topo da cabeça. */
+.bio .retrato{
+  position:absolute; right:0; top:0; bottom:0; width:52%;
+  overflow:hidden;
+}
+.bio .retrato img{
+  width:100%; height:100%; object-fit:cover; display:block;
+  -webkit-mask-image:linear-gradient(to right,
+    transparent 0%, rgba(0,0,0,.05) 9%, rgba(0,0,0,.20) 16%,
+    rgba(0,0,0,.52) 23%, rgba(0,0,0,.85) 29%, #000 35%);
+  mask-image:linear-gradient(to right,
+    transparent 0%, rgba(0,0,0,.05) 9%, rgba(0,0,0,.20) 16%,
+    rgba(0,0,0,.52) 23%, rgba(0,0,0,.85) 29%, #000 35%);
+}
+
+/* A marca aberta, não a assinatura miúda do rodapé: é o slide em que a pessoa
+   e a marca aparecem juntas, e é o único lugar do deck em que ela tem tamanho. */
+.bio .marca-bio{ margin-bottom:1.5em }
+.bio .marca-bio svg{ height:107.52px; width:auto; color:var(--sinal); display:block }
+
+.bio .titulo{ font-size:72.96px; margin-bottom:.5em }
+.bio ul{ list-style:none; display:flex; flex-direction:column; gap:.45em }
+.bio li{ font-size:33.6px; line-height:1.3; display:flex; gap:.6em; align-items:baseline }
+.bio li::before{ content:"—"; color:var(--sinal); flex:none }
+.bio .grupo{ margin-top:1.2em }
+.bio .grupo-rotulo{
+  font-size:var(--t-kicker); font-weight:600; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--dim); margin-bottom:.5em;
+}
+
+/* ------------------------------------------------------ fundo */
+/* Arte sangrando atrás do slide inteiro, rebaixada a marca d'água.
+   Não confundir com o layout `imagem`: lá a arte é o assunto,
+   aqui ela é atmosfera e o texto continua mandando. */
+
+.fundo{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:-1 }
+.fundo img{ width:100%; height:100%; object-fit:cover; display:block }
+
+/* O fundo fica atrás de tudo por z-index negativo, não por forçar
+   `position:relative` no resto: aquela regra alcançava os irmãos absolutos
+   — rodapé, retrato, guia — e jogava todos de volta para o fluxo, no meio
+   do slide. `isolation` dá ao slide um contexto de empilhamento próprio,
+   e é o que impede o z-index:-1 de furar até o fundo da página. */
+.slide{ isolation:isolate }

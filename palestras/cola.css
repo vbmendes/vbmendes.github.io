@@ -1,0 +1,71 @@
+/* ============================================================
+   A cola entre o reveal.js e o slide.
+
+   O slide inteiro — cor, tipo, layout — vem do tokens.css, que é o
+   mesmo arquivo que o rasterizador usa. Aqui só existe o que impede
+   o reveal de mandar no que é do slide.
+
+   Este arquivo entra na camada `cola`, entre `reveal` e `slide`.
+   Quem monta as camadas é o `camadas.css`, gerado por deck, porque
+   o caminho até o reveal muda entre o deck local e o publicado.
+
+   A camada é o que faz isto funcionar. As regras daqui precisam
+   vencer o reveal.css e perder para o tokens.css, e por
+   especificidade isso é impossível de acertar: `.reveal .slide img`
+   e `.arte img` empatam em (0,2,1), então quem carregasse por
+   último ganhava — e a arte `contida` saiu sangrando, sem recuo nem
+   borda, porque esta folha vinha depois. Com camada, ordem e
+   especificidade deixam de decidir.
+   ============================================================ */
+
+/* O reveal põe padding e alinhamento nas suas sections, pensando em
+   slide de texto. O nosso slide já traz a própria margem, e qualquer
+   padding aqui empurraria a arte que sangra. */
+.reveal .slides section {
+  padding: 0;
+  text-align: left;
+  line-height: normal;
+  letter-spacing: normal;
+  font-size: 16px;   /* base neutra: o tokens.css declara tudo em px */
+}
+
+.reveal .slides section > .slide { margin: 0; }
+
+/* O reveal.css normaliza h1..h6 com text-transform, margem e sombra
+   próprias. Os títulos do slide são elementos desses e não podem
+   herdar nada disso. */
+.reveal .slide h1,
+.reveal .slide h2,
+.reveal .slide h3,
+.reveal .slide p,
+.reveal .slide ul,
+.reveal .slide ol,
+.reveal .slide li,
+.reveal .slide blockquote {
+  margin: 0;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  text-transform: none;
+  text-shadow: none;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+.reveal .slide ul,
+.reveal .slide ol { list-style: none; }
+
+/* `img` do reveal ganha borda, sombra, fundo branco e um teto de 95% —
+   o que enquadraria toda arte que sangra e encolheria o resto. */
+.reveal .slide img {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  max-width: none;
+  max-height: none;
+}
+
+.reveal .slide a { text-decoration: none; color: inherit; }
