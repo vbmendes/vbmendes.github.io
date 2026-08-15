@@ -200,6 +200,27 @@ body {
 .em-tela-cheia .tela-cheia .entrar { display: none; }
 .em-tela-cheia .tela-cheia .sair { display: block; }
 
+/* --- modo limpo: o contorno de onde não há Fullscreen API -----------------
+   Chrome no iPhone roda em WKWebView, e ali a API só existe se o app
+   hospedeiro ligar `isElementFullscreenEnabled`, o que o Chrome não faz. Sem
+   ela, o botão passa a esconder a moldura — a única área que a página
+   controla. A barra do navegador fica: para tela cheia de verdade no iPhone,
+   é o Safari, onde a API funciona desde o iOS 17.4.
+
+   O próprio botão é a única coisa que fica, esmaecido, porque no toque não há
+   `mousemove` para trazer a moldura de volta: sem ele, o modo limpo não teria
+   saída. */
+.modo-limpo .chip:not(.tela-cheia),
+.modo-limpo .indice,
+.modo-limpo .reveal .controls,
+.modo-limpo .reveal .progress,
+.modo-limpo .reveal .slide-number {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .45s ease, visibility 0s linear .45s;
+}
+.modo-limpo .tela-cheia { opacity: .28; }
+
 /* Os controles do reveal entram no mesmo desvanecer da moldura. */
 .reveal .controls,
 .reveal .progress,

@@ -70,8 +70,25 @@
     return (vp && vp.parentElement) || document.documentElement;
   }
 
+  /* Chrome no iPhone roda em WKWebView, e ali a Fullscreen API só existe se o
+     app hospedeiro ligar `isElementFullscreenEnabled` — o Chrome não liga. No
+     Safari do iPhone ela funciona (iOS 17.4 em diante). Então a ausência é do
+     navegador, não do aparelho, e vale detectar em vez de cheirar o sistema. */
+  var temAPI = !!(document.documentElement.requestFullscreen ||
+                  document.documentElement.webkitRequestFullscreen);
+
   if (botao) {
     botao.addEventListener('click', function () {
+      // Sem API, o botão faz o máximo que a página controla: tira a moldura
+      // da frente. A barra do navegador continua lá — isso não tem contorno
+      // em página nenhuma, só abrindo no Safari.
+      if (!temAPI) {
+        var limpo = raiz.classList.toggle('modo-limpo');
+        raiz.classList.toggle('em-tela-cheia', limpo);
+        botao.setAttribute('aria-pressed', limpo ? 'true' : 'false');
+        botao.setAttribute('title', limpo ? 'Mostrar a moldura' : 'Esconder a moldura');
+        return;
+      }
       if (document.fullscreenElement || document.webkitFullscreenElement) {
         (document.exitFullscreen || document.webkitExitFullscreen).call(document);
       } else {
@@ -91,12 +108,7 @@
       });
     });
 
-    // Safari em iOS não tem Fullscreen API em elemento: sem isso o botão
-    // ficaria ali sem fazer nada.
-    if (!(document.documentElement.requestFullscreen ||
-          document.documentElement.webkitRequestFullscreen)) {
-      botao.hidden = true;
-    }
+    if (!temAPI) botao.setAttribute('title', 'Esconder a moldura');
   }
 
   /* --- índice ----------------------------------------------------------- */
