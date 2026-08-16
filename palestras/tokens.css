@@ -1,13 +1,6 @@
-/* ============================================================
-   tokens.css — único lugar para mexer em cor, tipo e ritmo do
-   slide de palestra. Alterar aqui muda todos os layouts de uma vez.
-
-   A cor e a semântica vêm de identidade-visual/references/cor.md.
-   O que é desta skill é a escala: um slide de palestra é lido a
-   dez metros, num projetor de contraste ruim, por alguém que tem
-   sete segundos de atenção. Tudo é maior do que parece necessário
-   na tela do notebook — é assim mesmo.
-   ============================================================ */
+/* tokens.css — cor, tipo e ritmo dos slides desta palestra.
+   Gerado junto com a página: editar aqui não sobrevive à
+   próxima publicação. */
 
 /* As fontes vivem em logo/fonts/, fonte única da identidade. */
 @font-face { font-family:"Poppins"; src:url("/fonts/Poppins-Regular.ttf"); font-weight:400 }
