@@ -2,7 +2,9 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- `viewport-fit=cover` é o par do `env(safe-area-inset-*)` do deck.css: sem
+     ele o iOS reserva o notch por conta própria e os `env()` voltam zero. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ADORA — os 5 superpoderes do Vibe Coding — Vinicius Mendes</title>
 <meta name="description" content="ADORA — os 5 superpoderes do Vibe Coding. Palestra de Vinicius Mendes.">
 <meta name="color-scheme" content="light dark">
@@ -10,6 +12,22 @@
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon-180.png">
+
+<!-- Instalado na tela de início, o deck abre sem barra de endereço e sem barra
+     inferior — a única tela cheia de verdade que o iPhone dá fora do Safari.
+     O manifest é por palestra e não o /site.webmanifest porque o `start_url`
+     de lá é a home: instalado a partir daqui, o ícone tem que abrir o deck.
+     A meta da Apple fica para os iOS anteriores ao suporte a `display`. -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!-- Rótulo do ícone: o iOS corta por volta de 12 caracteres, então o título
+     inteiro não serve. `curto` no roteiro se quiser mandar nele; senão, o slug,
+     que já é curto por construção. -->
+<meta name="apple-mobile-web-app-title" content="ADORA">
+<!-- Ink, o mesmo da tarja: a barra de status e o splash continuam a moldura
+     de projeção em vez de piscarem branco antes do primeiro slide. -->
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="theme-color" content="#101418">
 
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://www.vbmendes.dev/palestras/rogadx-2026/">
@@ -598,7 +616,13 @@
     controls: true,
     progress: true,
     slideNumber: 'c/t',
-    transition: 'slide',
+    // Fade, e não o `slide`: cada slide aqui é uma composição que sangra até a
+    // borda, e deslizar isso para o lado arrasta a arte inteira pela tela. O
+    // fade troca a imagem sem mover nada.
+    //
+    // A duração não vem daqui: o reveal só oferece três velocidades (0.8s,
+    // `fast` 0.4s, `slow` 1.2s) e a nossa é 0.2s. Quem a define é o deck.css.
+    transition: 'fade',
     // Abaixo de 435px de largura o reveal troca sozinho para a visão de
     // rolagem, que empilha os slides numa coluna. É uma decisão razoável para
     // deck de texto e errada para este: os slides são 16:9 com arte sangrando,

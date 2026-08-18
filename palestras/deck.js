@@ -77,16 +77,70 @@
   var temAPI = !!(document.documentElement.requestFullscreen ||
                   document.documentElement.webkitRequestFullscreen);
 
+  /* A saída para o iPhone sem API: `x-safari-https://` é o esquema que o iOS
+     entrega ao Safari, e no Safari a Fullscreen API existe desde o 17.4. É o
+     único jeito de a barra do navegador realmente sumir a partir daqui — a
+     página não tem controle nenhum sobre a moldura do Chrome. A dica só
+     aparece depois do primeiro toque no botão, porque só aí a pessoa demonstrou
+     querer tela cheia; antes disso seria um aviso que ninguém pediu. */
+  var ehIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  var dica;
+
+  function ofereceSafari() {
+    if (dica || !ehIOS) return;
+    dica = document.createElement('a');
+    dica.className = 'dica-safari';
+    dica.href = 'x-safari-' + location.href;
+    dica.textContent = 'Tela cheia de verdade: abrir no Safari';
+    document.body.appendChild(dica);
+    // Sai sozinha: é um atalho oferecido, não um banner para conviver com o
+    // slide. Quem quiser de novo toca no botão de novo.
+    setTimeout(function () {
+      if (!dica) return;
+      dica.remove();
+      dica = null;
+    }, 6000);
+  }
+
+  /* --- modo imersivo ----------------------------------------------------
+     Onde não há Fullscreen API, o botão faz duas coisas: some com a nossa
+     moldura e destrava a rolagem, que é o que faz o navegador recolher a
+     barra dele. O CSS cuida do `touch-action` e do `overflow`; aqui só entra
+     o espaçador, porque ele é curso de rolagem e não conteúdo — não teria
+     sentido estar no HTML publicado.
+
+     O `scrollTo(0, 1)` tira a página do topo já de saída: o iOS só começa a
+     recolher a barra depois do primeiro pixel rolado, e sair do zero sozinho
+     deixa o primeiro arrasto valer inteiro. */
+  var respiro;
+
+  function entraImersivo() {
+    if (respiro) return;
+    respiro = document.createElement('div');
+    respiro.className = 'respiro';
+    respiro.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(respiro);
+    window.scrollTo(0, 1);
+  }
+
+  function saiImersivo() {
+    if (!respiro) return;
+    respiro.remove();
+    respiro = null;
+    window.scrollTo(0, 0);
+  }
+
   if (botao) {
     botao.addEventListener('click', function () {
-      // Sem API, o botão faz o máximo que a página controla: tira a moldura
-      // da frente. A barra do navegador continua lá — isso não tem contorno
-      // em página nenhuma, só abrindo no Safari.
+      // Sem API, o botão faz o máximo que a página controla: recolhe a moldura
+      // do navegador junto com a nossa, e aponta o caminho para onde a tela
+      // cheia existe de fato.
       if (!temAPI) {
-        var limpo = raiz.classList.toggle('modo-limpo');
-        raiz.classList.toggle('em-tela-cheia', limpo);
-        botao.setAttribute('aria-pressed', limpo ? 'true' : 'false');
-        botao.setAttribute('title', limpo ? 'Mostrar a moldura' : 'Esconder a moldura');
+        var imersivo = raiz.classList.toggle('imersivo');
+        raiz.classList.toggle('em-tela-cheia', imersivo);
+        botao.setAttribute('aria-pressed', imersivo ? 'true' : 'false');
+        botao.setAttribute('title', imersivo ? 'Mostrar a moldura' : 'Esconder a moldura');
+        if (imersivo) { entraImersivo(); ofereceSafari(); } else { saiImersivo(); }
         return;
       }
       if (document.fullscreenElement || document.webkitFullscreenElement) {

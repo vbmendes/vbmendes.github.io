@@ -96,6 +96,17 @@ body {
   white-space: nowrap;
 }
 
+/* --- velocidade da troca de slide ----------------------------------------
+   0.2s. O reveal só tem três velocidades — 0.8s, `fast` 0.4s e `slow` 1.2s —
+   e a mais rápida delas ainda deixa um tempo morto entre o clique e o slide.
+   Num deck de composições que sangram, o fade não precisa ser percebido: ele
+   existe só para a troca não piscar.
+
+   A regra mora aqui, fora de camada, e por isso vence o `reveal` sem disputa
+   de especificidade — o mesmo motivo pelo qual toda a moldura mora neste
+   arquivo. Ver o camadas.css. */
+.reveal .slides section { transition-duration: .05s; }
+
 /* --- controles do reveal ------------------------------------------------- */
 .reveal .controls { color: var(--accent); }
 .reveal .progress { color: var(--accent); height: 3px; }
@@ -135,17 +146,21 @@ body {
 /* --- link de volta e botões ----------------------------------------------
    Os da direita vão num flex, para que entrar ou sair um botão não obrigue a
    recalcular o `right` de todos os outros na mão. */
+/* Os `env()` são para quando não há barra de navegador para empurrar a página
+   para baixo: instalado na tela de início, o deck começa colado no topo, e sem
+   isso os chips ficariam embaixo do notch e da barra de status. Numa aba
+   comum os valores são zero e nada muda. */
 .voltar {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
+  top: calc(1rem + env(safe-area-inset-top));
+  left: calc(1rem + env(safe-area-inset-left));
   z-index: 40;
 }
 
 .cromo-dir {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
+  top: calc(1rem + env(safe-area-inset-top));
+  right: calc(1rem + env(safe-area-inset-right));
   z-index: 40;
   display: flex;
   align-items: center;
@@ -200,26 +215,113 @@ body {
 .em-tela-cheia .tela-cheia .entrar { display: none; }
 .em-tela-cheia .tela-cheia .sair { display: block; }
 
-/* --- modo limpo: o contorno de onde não há Fullscreen API -----------------
+/* --- modo imersivo: onde não há Fullscreen API ----------------------------
    Chrome no iPhone roda em WKWebView, e ali a API só existe se o app
-   hospedeiro ligar `isElementFullscreenEnabled`, o que o Chrome não faz. Sem
-   ela, o botão passa a esconder a moldura — a única área que a página
-   controla. A barra do navegador fica: para tela cheia de verdade no iPhone,
-   é o Safari, onde a API funciona desde o iOS 17.4.
+   hospedeiro ligar `isElementFullscreenEnabled`, o que o Chrome não faz.
 
-   O próprio botão é a única coisa que fica, esmaecido, porque no toque não há
-   `mousemove` para trazer a moldura de volta: sem ele, o modo limpo não teria
-   saída. */
-.modo-limpo .chip:not(.tela-cheia),
-.modo-limpo .indice,
-.modo-limpo .reveal .controls,
-.modo-limpo .reveal .progress,
-.modo-limpo .reveal .slide-number {
+   Mas a barra do navegador não é intocável: Chrome e Safari recolhem a
+   própria barra quando a página rola. Todo site comum ganha isso de graça — e
+   o deck não ganhava porque o reveal declara `touch-action: pinch-zoom` no
+   `.reveal` e `overflow: hidden` no `html.reveal-full-page`. Sem pan e sem
+   rolagem, o navegador nunca recebe o gesto que recolheria a barra. O modo
+   imersivo desfaz as duas coisas, e só enquanto está ligado.
+
+   Some a nossa moldura e recolhe a do navegador. O que sobra é o botão,
+   esmaecido: no toque não há `mousemove` para trazer a moldura de volta, e
+   sem ele o modo não teria saída. */
+.imersivo .chip:not(.tela-cheia),
+.imersivo .indice,
+.imersivo .reveal .controls,
+.imersivo .reveal .progress,
+.imersivo .reveal .slide-number {
   opacity: 0;
   visibility: hidden;
   transition: opacity .45s ease, visibility 0s linear .45s;
 }
-.modo-limpo .tela-cheia { opacity: .28; }
+.imersivo .tela-cheia { opacity: .28; }
+
+/* Devolve o arrasto vertical ao navegador — é ele que recolhe a barra. O
+   swipe horizontal continua chegando ao reveal, porque `pan-y` não permite
+   pan horizontal: o navegador não tem o que fazer com aquele gesto e deixa
+   passar. O que se perde é o swipe vertical de navegação, e este deck não tem
+   pilha vertical: as seções são todas irmãs. */
+html.imersivo .reveal { touch-action: pan-y pinch-zoom; }
+
+/* Destrava a rolagem que o reveal prendeu. `html.reveal-full-page` é dele e
+   traz `height: 100dvh; overflow: hidden`; o `.reveal-viewport` (que fora do
+   modo `embedded` é o próprio body) traz outro `overflow: hidden`. */
+html.imersivo.reveal-full-page {
+  height: auto;
+  overflow: visible;
+}
+
+.imersivo body,
+.imersivo .reveal-viewport {
+  height: auto;
+  overflow: visible;
+  /* O arrasto é para recolher a barra, não para dar bounce nem para recarregar
+     a página no meio de uma apresentação. */
+  overscroll-behavior: none;
+}
+
+/* O slide fica preso: quem rola é a página em volta dele, e o único efeito
+   visível da rolagem é a barra do navegador saindo.
+
+   `lvh` de propósito, e não `dvh`: é o viewport com a barra já recolhida, ou
+   seja, o estado final. Medir com `dvh` faria o reveal reescalar o slide a
+   cada quadro do recolhimento. */
+html.imersivo .reveal {
+  position: fixed;
+  inset: 0;
+  height: 100lvh;
+}
+
+/* O curso de rolagem. O iOS não recolhe a barra por um pixel de sobra: precisa
+   de um arrasto com distância. Este espaçador é criado pelo deck.js ao entrar
+   no modo e removido ao sair — conteúdo nenhum, só curso. */
+.respiro {
+  height: 120px;
+  margin-top: 100lvh;
+  pointer-events: none;
+}
+
+/* --- a saída para o Safari ------------------------------------------------
+   Onde não há Fullscreen API, esconder a moldura é tudo que a página pode: a
+   barra do navegador é do Chrome, não nossa. O `x-safari-https://` é o único
+   caminho real, e ele aparece só depois que a pessoa toca no botão — a dica
+   responde a um pedido, não interrompe a leitura.
+
+   Fica embaixo e no centro, longe do número do slide (que é embaixo à
+   esquerda) e do polegar que acabou de tocar no botão lá em cima. */
+.dica-safari {
+  position: fixed;
+  left: 50%;
+  bottom: calc(1.15rem + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 50;
+  max-width: calc(100vw - 2rem);
+  font-family: var(--mono);
+  font-size: .66rem;
+  letter-spacing: .06em;
+  text-align: center;
+  text-decoration: none;
+  color: var(--paper);
+  background: color-mix(in srgb, var(--ink) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
+  border-radius: 999px;
+  padding: .6rem 1rem;
+  box-shadow: 0 6px 18px rgba(16, 20, 24, .35);
+  animation: dica-entra .25s ease both;
+}
+
+@keyframes dica-entra {
+  from { opacity: 0; transform: translate(-50%, .5rem); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dica-safari { animation: none; }
+}
 
 /* Os controles do reveal entram no mesmo desvanecer da moldura. */
 .reveal .controls,
