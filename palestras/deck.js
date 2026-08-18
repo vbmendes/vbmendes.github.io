@@ -70,36 +70,64 @@
     return (vp && vp.parentElement) || document.documentElement;
   }
 
-  /* Chrome no iPhone roda em WKWebView, e ali a Fullscreen API só existe se o
-     app hospedeiro ligar `isElementFullscreenEnabled` — o Chrome não liga. No
-     Safari do iPhone ela funciona (iOS 17.4 em diante). Então a ausência é do
-     navegador, não do aparelho, e vale detectar em vez de cheirar o sistema. */
+  /* No iPhone não há Fullscreen API de elemento em navegador nenhum — nem no
+     Safari. Corre por fora que o iOS 17.4 teria resolvido; aquilo era beta e
+     iPad, e no iPhone o WebKit 212934 continua aberto. Testado no aparelho:
+     `requestFullscreen` e `webkitRequestFullscreen` são ambos indefinidos.
+
+     Ainda assim quem decide é a detecção, e não o sistema: o mesmo código roda
+     no desktop e no Android, onde a API existe, e um dia o iPhone entra nessa
+     lista sem ninguém precisar mexer aqui. */
   var temAPI = !!(document.documentElement.requestFullscreen ||
                   document.documentElement.webkitRequestFullscreen);
 
-  /* A saída para o iPhone sem API: `x-safari-https://` é o esquema que o iOS
-     entrega ao Safari, e no Safari a Fullscreen API existe desde o 17.4. É o
-     único jeito de a barra do navegador realmente sumir a partir daqui — a
-     página não tem controle nenhum sobre a moldura do Chrome. A dica só
-     aparece depois do primeiro toque no botão, porque só aí a pessoa demonstrou
-     querer tela cheia; antes disso seria um aviso que ninguém pediu. */
+  /* A dica de como chegar perto da tela cheia num iPhone.
+
+     Nenhum navegador do iPhone faz fullscreen de elemento — nem o Safari, ao
+     contrário do que a documentação de fora sugere. O que sobra são duas
+     coisas, e nenhuma delas é descobrível sozinha:
+
+     1. arrastar para cima, e o navegador recolhe a própria barra. É o que o
+        modo imersivo destravou, mas depende de um gesto que ninguém adivinha
+        estar disponível numa página que até agora não rolava;
+     2. instalar na tela de início, onde não sobra barra nenhuma.
+
+     A dica fala do gesto sempre, e da instalação só onde ela é possível: o
+     Chrome do iPhone não instala nada, e mandar a pessoa trocar de navegador
+     no meio de uma apresentação é pedir mais do que a dica vale.
+
+     Aparece depois do toque no botão, nunca antes: só aí a pessoa demonstrou
+     querer tela cheia. */
   var ehIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  var podeInstalar = ehIOS && !/CriOS|FxiOS|EdgiOS/.test(navigator.userAgent);
   var dica;
 
-  function ofereceSafari() {
+  function mostraDica() {
     if (dica || !ehIOS) return;
-    dica = document.createElement('a');
-    dica.className = 'dica-safari';
-    dica.href = 'x-safari-' + location.href;
-    dica.textContent = 'Tela cheia de verdade: abrir no Safari';
+
+    dica = document.createElement('div');
+    dica.className = 'dica';
+
+    var gesto = document.createElement('span');
+    gesto.className = 'dica-linha';
+    gesto.textContent = 'Arraste para cima para esconder a barra';
+    dica.appendChild(gesto);
+
+    if (podeInstalar) {
+      var instalar = document.createElement('span');
+      instalar.className = 'dica-linha dica-instalar';
+      instalar.textContent = 'Sem barra nenhuma: Compartilhar → Tela de Início';
+      dica.appendChild(instalar);
+    }
+
     document.body.appendChild(dica);
-    // Sai sozinha: é um atalho oferecido, não um banner para conviver com o
+    // Sai sozinha: é uma dica oferecida, não um banner para conviver com o
     // slide. Quem quiser de novo toca no botão de novo.
     setTimeout(function () {
       if (!dica) return;
       dica.remove();
       dica = null;
-    }, 6000);
+    }, 7000);
   }
 
   /* --- modo imersivo ----------------------------------------------------
@@ -140,7 +168,7 @@
         raiz.classList.toggle('em-tela-cheia', imersivo);
         botao.setAttribute('aria-pressed', imersivo ? 'true' : 'false');
         botao.setAttribute('title', imersivo ? 'Mostrar a moldura' : 'Esconder a moldura');
-        if (imersivo) { entraImersivo(); ofereceSafari(); } else { saiImersivo(); }
+        if (imersivo) { entraImersivo(); mostraDica(); } else { saiImersivo(); }
         return;
       }
       if (document.fullscreenElement || document.webkitFullscreenElement) {

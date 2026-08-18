@@ -267,13 +267,16 @@ html.imersivo.reveal-full-page {
 /* O slide fica preso: quem rola é a página em volta dele, e o único efeito
    visível da rolagem é a barra do navegador saindo.
 
-   `lvh` de propósito, e não `dvh`: é o viewport com a barra já recolhida, ou
-   seja, o estado final. Medir com `dvh` faria o reveal reescalar o slide a
-   cada quadro do recolhimento. */
+   `dvh`, e não `lvh`. Já foi `lvh` — o viewport com a barra recolhida, que é o
+   estado final — para poupar o reveal de reescalar durante o recolhimento. Era
+   errado: enquanto a barra está lá, `lvh` é maior que o visível e o slide nasce
+   com o pé cortado. Em paisagem, onde a barra come mais altura, o corte comia a
+   linha de créditos. `dvh` acompanha, o slide sempre cabe inteiro, e reescalar
+   é o preço certo a pagar por isso. */
 html.imersivo .reveal {
   position: fixed;
   inset: 0;
-  height: 100lvh;
+  height: 100dvh;
 }
 
 /* O curso de rolagem. O iOS não recolhe a barra por um pixel de sobra: precisa
@@ -281,19 +284,19 @@ html.imersivo .reveal {
    no modo e removido ao sair — conteúdo nenhum, só curso. */
 .respiro {
   height: 120px;
-  margin-top: 100lvh;
+  margin-top: 100dvh;
   pointer-events: none;
 }
 
-/* --- a saída para o Safari ------------------------------------------------
-   Onde não há Fullscreen API, esconder a moldura é tudo que a página pode: a
-   barra do navegador é do Chrome, não nossa. O `x-safari-https://` é o único
-   caminho real, e ele aparece só depois que a pessoa toca no botão — a dica
-   responde a um pedido, não interrompe a leitura.
+/* --- a dica do iPhone -----------------------------------------------------
+   Nenhum navegador do iPhone faz fullscreen de elemento. O que existe é
+   arrastar (o navegador recolhe a própria barra) e instalar na tela de início
+   (onde não há barra). Nenhum dos dois é descobrível, e por isso a dica.
 
-   Fica embaixo e no centro, longe do número do slide (que é embaixo à
-   esquerda) e do polegar que acabou de tocar no botão lá em cima. */
-.dica-safari {
+   Aparece só depois que a pessoa toca no botão — responde a um pedido, não
+   interrompe a leitura. Fica embaixo e no centro, longe do número do slide
+   (que é embaixo à esquerda) e do polegar que tocou no botão lá em cima. */
+.dica {
   position: fixed;
   left: 50%;
   bottom: calc(1.15rem + env(safe-area-inset-bottom));
@@ -303,8 +306,10 @@ html.imersivo .reveal {
   font-family: var(--mono);
   font-size: .66rem;
   letter-spacing: .06em;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
   text-align: center;
-  text-decoration: none;
   color: var(--paper);
   background: color-mix(in srgb, var(--ink) 88%, transparent);
   border: 1px solid color-mix(in srgb, var(--paper) 22%, transparent);
@@ -314,13 +319,22 @@ html.imersivo .reveal {
   animation: dica-entra .25s ease both;
 }
 
+/* A segunda linha é a rota definitiva, e por isso não é o destaque: quem está
+   no meio de uma apresentação quer o gesto, não uma instalação. */
+.dica-instalar {
+  color: var(--accent);
+  text-decoration: none;
+  opacity: .85;
+  font-size: .62rem;
+}
+
 @keyframes dica-entra {
   from { opacity: 0; transform: translate(-50%, .5rem); }
   to   { opacity: 1; transform: translate(-50%, 0); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dica-safari { animation: none; }
+  .dica { animation: none; }
 }
 
 /* Os controles do reveal entram no mesmo desvanecer da moldura. */
