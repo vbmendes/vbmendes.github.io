@@ -184,6 +184,14 @@ slide corrente o reveal deixa tudo em `display:none`, que é o que faz o navegad
 o download até a hora. As fontes vêm de `/fonts`, servidas para o site inteiro — as
 páginas de palestra não guardam cópia.
 
+**Há uma exceção, `python-brasil-2026/`.** Os slides dela foram desenhados em outra
+ferramenta e chegam prontos: cada elemento traz o estilo escrito nele mesmo. Por isso a
+página não carrega o `tokens.css`, e uma camada `slide` curta repõe só o que eles
+herdavam da página onde foram feitos. Ela guarda as próprias fontes em `fonts/`, com
+`LICENSE.txt` ao lado, e as imagens em `assets/` no formato original, sem passar para
+WebP — são os mesmos bytes do original, então o slide publicado é idêntico a ele pixel a
+pixel. A moldura é a mesma das outras.
+
 ## Fontes
 
 `fonts/` tem cópias de Poppins e JetBrains Mono em `.ttf`, porque o site precisa servir os
